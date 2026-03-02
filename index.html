@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조성모 | Digital Business Card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.5) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(79, 70, 229, 0.4) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.4) 0px, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #f8fafc;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 이스터에그 1: 에이메스 핑크 테마 */
+        body.secret-mode-aemeath {
+            background-color: #fff0f5;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 182, 193, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 240, 245, 1) 0px, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='1' fill='%23ff69b4' fill-opacity='0.1'/%3E%3C/svg%3E");
+            color: #d63384;
+        }
+
+        /* 이스터에그 2: 카르티시아 - 깊은 바다색 & 연한 녹색 테마 */
+        body.secret-mode-cartethyia {
+            background-color: #075985;
+            background-image: 
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.3) 0px, transparent 80%),
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.6) 0px, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='0.8' fill='%2386efac' fill-opacity='0.2'/%3E%3C/svg%3E");
+            color: #f0f9ff;
+        }
+
+        /* 이스터에그 모드 시 하단 3개 설명창 숨기기 */
+        body.secret-mode-aemeath #action-list,
+        body.secret-mode-cartethyia #action-list {
+            display: none;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            border-radius: 3rem;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            transition: all 0.5s ease;
+        }
+
+        .secret-mode-aemeath .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #ffb6c1;
+            box-shadow: 0 20px 40px rgba(255, 182, 193, 0.3);
+        }
+
+        .secret-mode-cartethyia .glass-card {
+            background: rgba(8, 47, 73, 0.75);
+            border: 2px solid rgba(134, 239, 172, 0.5); 
+            box-shadow: 0 20px 50px rgba(8, 47, 73, 0.5), 0 0 20px rgba(134, 239, 172, 0.2);
+            color: #f0f9ff;
+        }
+
+        .profile-img {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            object-fit: cover;
+        }
+
+        .secret-mode-cartethyia .profile-img {
+            border-color: #86efac;
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+            filter: drop-shadow(0 0 15px rgba(134, 239, 172, 0.3));
+        }
+
+        .btn-action {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-action:active { transform: scale(0.94); }
+
+        .cartethyia-text {
+            background: linear-gradient(to right, #7dd3fc, #a7f3d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(134, 239, 172, 0.4));
+            letter-spacing: -0.02em;
+        }
+
+        /* 이스터에그 정보 카드 스타일 */
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .secret-mode-aemeath .info-card:hover,
+        .secret-mode-cartethyia .info-card:hover {
+            transform: translateY(-2px);
+            cursor: pointer;
+        }
+        .secret-mode-aemeath .info-card:hover { background-color: rgba(214, 51, 132, 0.1); }
+        .secret-mode-cartethyia .info-card:hover { background-color: rgba(134, 239, 172, 0.15); }
+
+        .secret-mode-cartethyia .text-indigo-300 { color: #86efac !important; }
+        .secret-mode-cartethyia .bg-indigo-600 { 
+            background: linear-gradient(135deg, #0369a1 0%, #059669 100%); 
+            border: 1px solid rgba(134, 239, 172, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .secret-mode-cartethyia .bg-white\/5 { 
+            background-color: rgba(255, 255, 255, 0.05); 
+            border-color: rgba(134, 239, 172, 0.2); 
+        }
+        .secret-mode-cartethyia i[class*="text-"] { color: #7dd3fc !important; }
+        .secret-mode-cartethyia .text-slate-400 { color: #cbd5e1 !important; }
+        .secret-mode-cartethyia .text-white { color: #f8fafc !important; }
+        .secret-mode-cartethyia .text-slate-300 { color: #e2e8f0 !important; }
+        .secret-mode-cartethyia #footer-text { color: #7dd3fc; opacity: 0.6; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div id="main-card" class="glass-card w-full max-w-sm p-10 flex flex-col items-center">
+        <!-- 상단 프로필 -->
+        <div class="profile-container mb-8 text-center">
+            <div class="relative inline-block group">
+                <img id="profile-trigger" 
+                     src="https://ui-avatars.com/api/?name=SM&background=6366f1&color=fff&size=160&bold=true" 
+                     alt="조성모" class="profile-img w-36 h-36 rounded-[2.5rem] border-4 border-white/10 shadow-2xl">
+                
+                <div id="secret-badge" class="hidden absolute -bottom-3 -right-3 bg-gradient-to-tr from-rose-500 to-pink-300 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg animate-pulse">
+                    AEMEATH
+                </div>
+                <div id="cartethyia-badge" class="hidden absolute -bottom-3 -right-3 bg-gradient-to-tr from-cyan-500 to-emerald-400 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg border border-white/30 animate-pulse">
+                    WIFE
+                </div>
+            </div>
+            
+            <h1 class="mt-8 text-4xl font-extrabold tracking-tight text-white italic transition-all duration-500" id="name-display">조성모</h1>
+            <div class="mt-2 flex items-center justify-center space-x-2">
+                <span id="line-left" class="h-px w-4 bg-indigo-500"></span>
+                <p id="sub-label" class="text-indigo-300 font-semibold text-xs uppercase tracking-[0.3em]">Digital Identity</p>
+                <span id="line-right" class="h-px w-4 bg-indigo-500"></span>
+            </div>
+        </div>
+
+        <!-- 핵심 정보 섹션 -->
+        <div id="info-grid" class="grid grid-cols-2 gap-4 w-full mb-10">
+            <div id="card-1" onclick="handleCardClick(1)" class="info-card bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center">
+                <i id="icon-1" class="fas fa-calendar-alt text-indigo-400 text-xs mb-2"></i>
+                <p id="label-1" class="text-xs text-slate-400 font-medium mb-0.5 uppercase tracking-tighter text-center">Birthday</p>
+                <p id="info-1" class="text-sm font-bold text-center">1999.11.30</p>
+            </div>
+            <div id="card-2" onclick="handleCardClick(2)" class="info-card bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center">
+                <i id="icon-2" class="fas fa-tint text-rose-400 text-xs mb-2"></i>
+                <p id="label-2" class="text-xs text-slate-400 font-medium mb-0.5 uppercase tracking-tighter text-center">Blood</p>
+                <p id="info-2" class="text-sm font-bold text-center">Type O</p>
+            </div>
+        </div>
+
+        <!-- 연락처 액션 센터 -->
+        <div id="action-list" class="w-full space-y-4">
+            <a href="tel:010-9926-7449" class="btn-action flex items-center justify-between p-5 bg-indigo-600 hover:bg-indigo-500 rounded-[1.5rem] shadow-xl group">
+                <div class="flex items-center">
+                    <div class="bg-white/20 p-2.5 rounded-xl mr-4">
+                        <i id="action-icon-1" class="fas fa-phone-alt text-white"></i>
+                    </div>
+                    <span id="call-text" class="font-bold text-white tracking-wide">전화 연결</span>
+                </div>
+                <i class="fas fa-chevron-right text-indigo-300 text-sm"></i>
+            </a>
+
+            <button onclick="downloadVCF()" class="btn-action w-full flex items-center p-5 bg-white/5 hover:bg-white/10 rounded-[1.5rem] border border-white/10">
+                <div class="bg-emerald-500/20 p-2.5 rounded-xl mr-4">
+                    <i id="action-icon-2" class="fas fa-id-card text-emerald-400"></i>
+                </div>
+                <span id="save-text" class="font-bold text-white tracking-wide text-left flex-1">연락처 자동 저장</span>
+            </button>
+
+            <a href="mailto:wh3942@naver.com" id="email-link" class="btn-action flex items-center p-5 bg-white/5 hover:bg-white/10 rounded-[1.5rem] border border-white/5">
+                <div class="bg-rose-500/20 p-2.5 rounded-xl mr-4">
+                    <i id="action-icon-3" class="fas fa-envelope text-rose-400"></i>
+                </div>
+                <span id="email-text" class="font-medium text-slate-300 text-sm">wh3942@naver.com</span>
+            </a>
+        </div>
+
+        <p id="footer-text" class="mt-12 text-[9px] text-slate-600 font-black tracking-[0.4em] uppercase opacity-50">SUNGMO.CLOUD / 2024</p>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-50">
+        Mode Switched!
+    </div>
+
+    <script>
+        let clicks = 0;
+        let pressTimer;
+        const profileTrigger = document.getElementById('profile-trigger');
+        const body = document.body;
+        
+        let currentMode = 'normal';
+
+        // 카드 클릭 핸들러 (유튜브 링크)
+        function handleCardClick(cardNumber) {
+            if (currentMode === 'aemeath') {
+                if (cardNumber === 1) {
+                    window.open('https://youtu.be/cpWYNQnoVU0?si=K-p14HeHA8CzKB9_', '_blank');
+                } else if (cardNumber === 2) {
+                    window.open('https://youtu.be/qP0tcOOlZZ8?si=_NtV5Ell820kxzY5', '_blank');
+                }
+            } else if (currentMode === 'cartethyia') {
+                if (cardNumber === 1) {
+                    window.open('https://youtu.be/oz8SIlTVJZY?si=hF4FRlk5wmjTWN6e', '_blank');
+                } else if (cardNumber === 2) {
+                    window.open('https://youtu.be/FGRdPnrabis?si=tl_nsmeqGeQYiqUZ', '_blank');
+                }
+            }
+        }
+        
+        // 에이메스 활성화 (5회 클릭)
+        profileTrigger.addEventListener('click', () => {
+            clicks++;
+            profileTrigger.style.transform = `scale(${1 - (clicks * 0.02)})`;
+            
+            if (clicks === 5) {
+                if (body.classList.contains('secret-mode-aemeath')) {
+                    resetToNormal();
+                } else {
+                    activateAemeathMode();
+                }
+                clicks = 0;
+                profileTrigger.style.transform = '';
+            }
+        });
+
+        // 카르티시아 활성화 (3초 롱프레스)
+        const startPress = () => {
+            pressTimer = setTimeout(() => {
+                if (body.classList.contains('secret-mode-cartethyia')) {
+                    resetToNormal();
+                } else {
+                    activateCartethyiaMode();
+                }
+            }, 3000); 
+        };
+
+        const cancelPress = () => {
+            clearTimeout(pressTimer);
+        };
+
+        profileTrigger.addEventListener('mousedown', startPress);
+        profileTrigger.addEventListener('touchstart', startPress);
+        profileTrigger.addEventListener('mouseup', cancelPress);
+        profileTrigger.addEventListener('mouseleave', cancelPress);
+        profileTrigger.addEventListener('touchend', cancelPress);
+
+        function activateAemeathMode() {
+            resetClasses();
+            currentMode = 'aemeath';
+            body.classList.add('secret-mode-aemeath');
+            
+            // 로컬 이미지 파일 3344.jpg 적용
+            profileTrigger.src = "3344.jpg";
+            profileTrigger.onerror = () => {
+                profileTrigger.src = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbaX08q%2FbtsIh8uU6S5%2FvVz9Y9yNkzE0Xv8u6K6Kk0%2Fimg.png";
+            };
+            
+            const nameDisp = document.getElementById('name-display');
+            nameDisp.textContent = "내 자랑임";
+            nameDisp.style.color = "#d63384";
+            nameDisp.classList.remove('cartethyia-text');
+
+            document.getElementById('sub-label').textContent = "에이메스";
+            document.getElementById('secret-badge').classList.remove('hidden');
+            
+            updateInfoUI("fab fa-youtube text-rose-500", "Video 1", "Paper Plane", "fab fa-youtube text-rose-500", "Video 2", "에이메스PV");
+            document.getElementById('footer-text').textContent = "WUTHERING WAVES / AEMEATH";
+            showToast("에이메스 테마 활성화! ✨");
+        }
+
+        function activateCartethyiaMode() {
+            resetClasses();
+            currentMode = 'cartethyia';
+            body.classList.add('secret-mode-cartethyia');
+            
+            // 로컬 이미지 파일 1122.jpg 적용
+            profileTrigger.src = "1122.jpg";
+            profileTrigger.onerror = () => {
+                profileTrigger.src = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbct9V4%2FbtsKmS825N4%2Fk6OqI98pY09uN67k5R9lHk%2Fimg.png";
+            };
+
+            const nameDisp = document.getElementById('name-display');
+            nameDisp.textContent = "내 아내임";
+            nameDisp.style.color = "";
+            nameDisp.classList.add('cartethyia-text');
+
+            document.getElementById('sub-label').textContent = "카르티시아";
+            document.getElementById('cartethyia-badge').classList.remove('hidden');
+            
+            updateInfoUI("fab fa-youtube text-cyan-400", "Video 1", "Against the Tide", "fab fa-youtube text-cyan-400", "Video 2", "카르티시아PV");
+            document.getElementById('footer-text').textContent = "BLACK SHORES / OCEAN QUEEN";
+            showToast("심해의 푸른 바람, 카르티시아 강림! 🌊");
+        }
+
+        function resetToNormal() {
+            resetClasses();
+            currentMode = 'normal';
+            profileTrigger.src = "https://ui-avatars.com/api/?name=SM&background=6366f1&color=fff&size=160&bold=true";
+            
+            const nameDisp = document.getElementById('name-display');
+            nameDisp.textContent = "조성모";
+            nameDisp.style.color = "";
+            nameDisp.classList.remove('cartethyia-text');
+            
+            document.getElementById('sub-label').textContent = "Digital Identity";
+            
+            updateInfoUI("fas fa-calendar-alt text-indigo-400", "Birthday", "1999.11.30", "fas fa-tint text-rose-400", "Blood", "Type O");
+            document.getElementById('footer-text').textContent = "SUNGMO.CLOUD / 2024";
+            showToast("표준 모드로 복귀합니다.");
+        }
+
+        function updateInfoUI(c1, l1, i1, c2, l2, i2) {
+            document.getElementById('icon-1').className = c1 + " text-xs mb-2";
+            document.getElementById('label-1').textContent = l1;
+            document.getElementById('info-1').textContent = i1;
+            document.getElementById('icon-2').className = c2 + " text-xs mb-2";
+            document.getElementById('label-2').textContent = l2;
+            document.getElementById('info-2').textContent = i2;
+        }
+
+        function resetClasses() {
+            body.classList.remove('secret-mode-aemeath', 'secret-mode-cartethyia');
+            document.getElementById('secret-badge').classList.add('hidden');
+            document.getElementById('cartethyia-badge').classList.add('hidden');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2000);
+        }
+
+        function downloadVCF() {
+            const vcard = "BEGIN:VCARD\nVERSION:3.0\nFN:조성모\nTEL;TYPE=CELL:010-9926-7449\nEMAIL:wh3942@naver.com\nEND:VCARD";
+            const blob = new Blob([vcard], { type: "text/vcard" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "조성모_연락처.vcf";
+            a.click();
+        }
+    </script>
+</body>
+</html>
