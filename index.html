@@ -44,7 +44,7 @@
             color: #f0f9ff;
         }
 
-        /* 이스터에그 모드 시 하단 3개 설명창 숨기기 */
+        /* 이스터에그 모드 시 하단 액션 리스트 숨기기 */
         body.secret-mode-aemeath #action-list,
         body.secret-mode-cartethyia #action-list {
             display: none;
@@ -126,6 +126,15 @@
         .secret-mode-cartethyia .text-white { color: #f8fafc !important; }
         .secret-mode-cartethyia .text-slate-300 { color: #e2e8f0 !important; }
         .secret-mode-cartethyia #footer-text { color: #7dd3fc; opacity: 0.6; }
+
+        /* 클릭 가능한 텍스트 스타일 */
+        #name-display {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        #name-display:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
@@ -146,7 +155,9 @@
                 </div>
             </div>
             
-            <h1 class="mt-8 text-4xl font-extrabold tracking-tight text-white italic transition-all duration-500" id="name-display">조성모</h1>
+            <!-- 이름 클릭 시 카르티시아 모드 전환 -->
+            <h1 class="mt-8 text-4xl font-extrabold tracking-tight text-white italic transition-all duration-500" id="name-display" onclick="handleNameClick()">조성모</h1>
+            
             <div class="mt-2 flex items-center justify-center space-x-2">
                 <span id="line-left" class="h-px w-4 bg-indigo-500"></span>
                 <p id="sub-label" class="text-indigo-300 font-semibold text-xs uppercase tracking-[0.3em]">Digital Identity</p>
@@ -204,9 +215,10 @@
     </div>
 
     <script>
-        let clicks = 0;
-        let pressTimer;
+        let profileClicks = 0;
+        let nameClicks = 0;
         const profileTrigger = document.getElementById('profile-trigger');
+        const nameDisplay = document.getElementById('name-display');
         const body = document.body;
         
         let currentMode = 'normal';
@@ -228,42 +240,35 @@
             }
         }
         
-        // 에이메스 활성화 (5회 클릭)
+        // 에이메스 활성화 (프로필 이미지 5회 클릭)
         profileTrigger.addEventListener('click', () => {
-            clicks++;
-            profileTrigger.style.transform = `scale(${1 - (clicks * 0.02)})`;
+            profileClicks++;
+            profileTrigger.style.transform = `scale(${1 - (profileClicks * 0.02)})`;
             
-            if (clicks === 5) {
+            if (profileClicks === 5) {
                 if (body.classList.contains('secret-mode-aemeath')) {
                     resetToNormal();
                 } else {
                     activateAemeathMode();
                 }
-                clicks = 0;
+                profileClicks = 0;
                 profileTrigger.style.transform = '';
             }
         });
 
-        // 카르티시아 활성화 (3초 롱프레스)
-        const startPress = () => {
-            pressTimer = setTimeout(() => {
+        // 카르티시아 활성화 (이름 5회 클릭)
+        function handleNameClick() {
+            nameClicks++;
+            
+            if (nameClicks === 5) {
                 if (body.classList.contains('secret-mode-cartethyia')) {
                     resetToNormal();
                 } else {
                     activateCartethyiaMode();
                 }
-            }, 3000); 
-        };
-
-        const cancelPress = () => {
-            clearTimeout(pressTimer);
-        };
-
-        profileTrigger.addEventListener('mousedown', startPress);
-        profileTrigger.addEventListener('touchstart', startPress);
-        profileTrigger.addEventListener('mouseup', cancelPress);
-        profileTrigger.addEventListener('mouseleave', cancelPress);
-        profileTrigger.addEventListener('touchend', cancelPress);
+                nameClicks = 0;
+            }
+        }
 
         function activateAemeathMode() {
             resetClasses();
